@@ -1,5 +1,7 @@
 # Google Secure LDAP for PE
-This README documents the process and configuration needed to connect Puppet Enterprise to Google's Secure LDAP service as an external directory for managing RBAC. While this configuration has been validated there are two caveats, Puppet Enterprise only officially supports Active Directory or OpenLDAP and you'll be required to configure stunnel to handle encryption and authentication of your PE console services to Google's LDAP frontend due to Google's requirement for certificate based client authentication not currently supported in Puppet Enterprise for LDAP external directories.
+This README documents the process and configuration needed to connect Puppet Enterprise to Google's Secure LDAP service as an external directory for managing RBAC. While this configuration has been validated there are caveats, Puppet Enterprise only officially supports Active Directory or OpenLDAP and you'll be required to configure stunnel to handle encryption and authentication of your PE console services to Google's LDAP frontend due to Google's requirement for certificate based client authentication not currently supported in Puppet Enterprise for LDAP external directories.
+
+**A request to support client certificate authentication in the Puppet Enterprise console's external directory configuration has been submitted but the feature has not yet been roadmapped.**
 
 ## Manual method
 1. [Setup and create a client certificate for the Google Secure LDAP service](https://support.google.com/cloudidentity/answer/9048516)
@@ -7,15 +9,15 @@ This README documents the process and configuration needed to connect Puppet Ent
 	* After finishing the previous process Puppet Enterprise requires you to provision Access credentials
 	
 	##### Additional Secure LDAP setup
-	1. Return to the LDAP app that lists the clients that you've provisioned and select the client you previously provisioned for the use with PE, in my example I named mine *Secure LDAP Docs*
+	1. Return to the LDAP app that lists the clients that you've provisioned and select the client you previously provisioned for the use with PE, in my example I named mine **Secure LDAP Docs**
 	
 	![Image of LDAP Admin Console](https://raw.githubusercontent.com/puppetlabs/google-ldap-for-pe/master/img/admin.png)
 	
-	2. This'll open the client's settings pane which should near the bottom have panel *Authentication* that'll ist *1 certificate* and *0 access credentials*; if this is true click on *Access Credentials*
+	2. This'll open the client's settings pane which should near the bottom have panel **Authentication** that lists **1 certificate** and **0 access credentials**, click on **Access Credentials**
 	
 	![Image of LDAP Clients Settings](https://raw.githubusercontent.com/puppetlabs/google-ldap-for-pe/master/img/client.png)
 	
-	3. Scroll down the new pane and click *GENERATE NEW CREDNTIALS* and a new random user name and password will be created
+	3. Scroll down the new pane and click **GENERATE NEW CREDNTIALS** and a new random user name and password will be created
 	
 	![Image of LDAP Client Auth](https://raw.githubusercontent.com/puppetlabs/google-ldap-for-pe/master/img/auth.png)
 	
@@ -32,7 +34,7 @@ This README documents the process and configuration needed to connect Puppet Ent
 
 `apt install  stunnel4`
 
-* Create the configuration file */etc/stunnel/google-ldap.conf* with the following contents (change the ldap-client.key and ldap-client.cert to reflect the name of the certificate downloaded during Google Secure LDAP setup and client certificate creation)
+* Create the configuration file **/etc/stunnel/google-ldap.conf** with the following contents (change the ldap-client.key and ldap-client.cert to reflect the name of the certificate downloaded during Google Secure LDAP setup and client certificate creation)
 ```
 [ldap]
 client = yes
@@ -42,9 +44,9 @@ cert = /etc/stunnel/ldap-client.crt
 key = /etc/stunnel/ldap-client.key
 ```
 
-* Upload LDAP client certificate and key obtained previously to the machine running your Puppet Enterprise console services and place them into the */etc/stunnel* directory
+* Upload LDAP client certificate and key obtained previously to the machine running your Puppet Enterprise console services and place them into the **/etc/stunnel** directory
 
-* Enable stunnel, edit */etc/default/stunnel4* so that *ENABLED=1*
+* Enable stunnel, edit **/etc/default/stunnel4** so that **ENABLED=1**
 
 * Start/restart stunnel
 
@@ -52,7 +54,8 @@ key = /etc/stunnel/ldap-client.key
 
 4. [Configure Puppet Enterprise external directory](https://puppet.com/docs/pe/2018.1/rbac_ldap_intro.html#connecting-puppet-enterprise-with-external-directory-services)
 
-* In the following example configuration you'll see a need for *Lookup user* and *Lookup password*, these were provisioned and provided to you in 
+* In the following example configuration you'll see a need for **Lookup user** and **Lookup password**, these were provisioned and provided to you as **Access credentials** once you completed the additional Secure LDAP setup.
+* From within Puppet Enterprise, SSL functionality for communicating with LDAP has been disabled in order to make it possible to leverage stunnel to do the certificate based authentication that is required by Google Secure LDAP; credentials are encrypted by stunnel is this configuration
 
 |*Name*|*Example Google Secure LDAP settings*|
 |------|-------------------------------------|
