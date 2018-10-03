@@ -3,7 +3,26 @@ This README documents the process and configuration needed to connect Puppet Ent
 
 ## Manual method
 1. [Setup and create a client certificate for the Google Secure LDAP service](https://support.google.com/cloudidentity/answer/9048516)
-	* This is specifically items indicated as 1, 2, 3, and 5 in the linked support article
+	* Begin specifically with the items indicated as 1, 2, 3, and 5 in the linked support article
+	* After finishing the previous process Puppet Enterprise requires you to provision Access credentials
+	
+	##### Additional Secure LDAP setup
+	1. Return to the LDAP app that lists the clients that you've provisioned and select the client you previously provisioned for the use with PE, in my example I named mine *Secure LDAP Docs*
+	
+	![Image of LDAP Admin Console](https://raw.githubusercontent.com/puppetlabs/google-ldap-for-pe/master/img/admin.png)
+	
+	2. This'll open the client's settings pane which should near the bottom have panel *Authentication* that'll ist *1 certificate* and *0 access credentials*; if this is true click on *Access Credentials*
+	
+	![Image of LDAP Clients Settings](https://raw.githubusercontent.com/puppetlabs/google-ldap-for-pe/master/img/client.png)
+	
+	3. Scroll down the new pane and click *GENERATE NEW CREDNTIALS* and a new random user name and password will be created
+	
+	![Image of LDAP Client Auth](https://raw.githubusercontent.com/puppetlabs/google-ldap-for-pe/master/img/auth.png)
+	
+	4. Save the credentials provided in the resulting popup pane, you won't be able to retrieve after dismissing the pane
+	
+	![Image of LDAP Access Cred](https://raw.githubusercontent.com/puppetlabs/google-ldap-for-pe/master/img/cred.png)
+	
 2. Setup [Puppet Enterprise](https://puppet.com/docs/pe/2018.1/installing.html) to your liking if you haven't already done so
 3. [Setup stunnel](https://support.google.com/cloudidentity/answer/9098476#stunnel)
 
